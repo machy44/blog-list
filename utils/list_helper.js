@@ -1,3 +1,5 @@
+const lodash = require('lodash');
+
 const dummy = (blogs) => {
   return 1;
 };
@@ -27,9 +29,22 @@ const favoriteBlog = (blogs) => {
   return extractCertainKeysFromObject(favorite, 'title', 'author', 'likes');
 };
 
+const getLargest = (collection, key) => {
+  let largest = {};
+  for (let element of Object.values(collection)) {
+    if (!largest[key]) {
+      largest = element;
+      continue;
+    }
+    if (element[key] > largest[key]) {
+      largest = element;
+    }
+  }
+  return largest;
+};
+
 const mostBlogs = (blogs) => {
   const collection = {};
-  let largest = {};
   blogs.forEach((blog) => {
     if (!collection[blog.author]) {
       collection[blog.author] = {
@@ -43,21 +58,12 @@ const mostBlogs = (blogs) => {
       };
     }
   });
-  for (let element of Object.values(collection)) {
-    if (!largest.blogs) {
-      largest = element;
-      continue;
-    }
-    if (element.blogs > largest.blogs) {
-      largest = element;
-    }
-  }
-  return largest;
+
+  return getLargest(collection, 'blogs');
 };
 
 const mostLikes = (blogs) => {
   const collection = {};
-  let largest = {};
   blogs.forEach((blog) => {
     if (!collection[blog.author]) {
       collection[blog.author] = {
@@ -72,18 +78,7 @@ const mostLikes = (blogs) => {
     }
   });
 
-  console.log(collection);
-
-  for (let element of Object.values(collection)) {
-    if (!largest.likes) {
-      largest = element;
-      continue;
-    }
-    if (element.likes > largest.likes) {
-      largest = element;
-    }
-  }
-  return largest;
+  return getLargest(collection, 'likes');
 };
 
 module.exports = {
