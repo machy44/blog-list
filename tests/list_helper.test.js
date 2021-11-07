@@ -49,11 +49,20 @@ describe('favorite', () => {
 
 describe('mostBlogs', () => {
   test('extract author with most blogs', () => {
-    const result = listHelper.favoriteBlog(mockedData.blogs);
+    const result = listHelper.mostBlogs(mockedData.blogs);
     expect(result).toEqual({
-      title: 'Canonical string reduction',
+      author: 'Robert C. Martin',
+      blogs: 3,
+    });
+  });
+});
+
+describe('mostLikes', () => {
+  test('extract author with most likes', () => {
+    const result = listHelper.mostLikes(mockedData.blogs);
+    expect(result).toEqual({
       author: 'Edsger W. Dijkstra',
-      likes: 12,
+      likes: 17,
     });
   });
 });
