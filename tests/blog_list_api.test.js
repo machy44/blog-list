@@ -76,9 +76,24 @@ test('new blog can be added without likes key which is set to zero by default', 
   expect(addedLikeValue).toBe(0);
 });
 
-test('note without title and url is not added', async () => {
+test('note without title is not added', async () => {
   const newBlog = {
     author: 'alen',
+    url: 'url title',
+    likes: 2,
+  };
+
+  await api.post('/api/blogs').send(newBlog).expect(400);
+
+  const blogsAtEnd = await helper.blogsInDb();
+
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length);
+});
+
+test('note without url is not added', async () => {
+  const newBlog = {
+    author: 'alen',
+    title: 'test title',
     likes: 2,
   };
 
