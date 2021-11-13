@@ -18,6 +18,10 @@ const errorHandler = (error, request, response, next) => {
     return response.status(400).json({ error: error.message });
   }
 
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' });
+  }
+
   console.log('next');
   next(error); // forward to generic express error
 };
