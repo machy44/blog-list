@@ -1,10 +1,10 @@
 POST http://localhost:3001/api/blogs HTTP/1.1
-content-type: application/json
+Content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hY2h5IiwiaWQiOiI2MWEyNjM2ZmNhMWQxMGE1MTZkM2EzZTQiLCJpYXQiOjE2MzgwMzc3NTd9.dBAtrMHPZkGceRNQdUlN429szfSe5YUDKM3gIDqYNdM
 
 {
-  "author": "new one",
-  "title": "blog title",
-  "url": "url url",
-  "userId": "619ebce1bc0990339bb06c2a"
+  "author": "authorized blog 1",
+  "title": "authorize 1",
+  "url": "authorize url 1"
 }
 
