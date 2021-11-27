@@ -2,7 +2,9 @@ POST http://localhost:3001/api/blogs HTTP/1.1
 content-type: application/json
 
 {
-  "author": "pero",
-  "title": "title",
-  "url": "url test"
+  "author": "new one",
+  "title": "blog title",
+  "url": "url url",
+  "userId": "619ebce1bc0990339bb06c2a"
 }
+
