@@ -1,6 +1,5 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
-const Blog = require('../models/blog');
 const helper = require('./test_helper');
 const app = require('../app');
 const supertest = require('supertest');
@@ -9,7 +8,6 @@ const api = supertest(app);
 
 describe('when there is initially one user in db', () => {
   beforeEach(async () => {
-    await Blog.deleteMany();
     await User.deleteMany({});
 
     const passwordHash = await bcrypt.hash('sekret', 10);
