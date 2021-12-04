@@ -1,24 +1,22 @@
 const mongoose = require('mongoose');
-const supertest = require('supertest');
+const supertest = require('supertest').agent;
 const helper = require('./test_helper');
 const app = require('../app');
+const bcrypt = require('bcrypt');
+const User = require('../models/user');
 
 const api = supertest(app);
 
 const Blog = require('../models/blog');
 
-beforeEach(async () => {
-  await Blog.deleteMany();
-  await Blog.insertMany(helper.initialBlogs);
-});
-
 describe('viewing blogs', () => {
   test('blogs are returned as json', async () => {
-    await api.get('/api/blogs').expect(200);
-    // .expect('Content-Type', /application\/json/);
+    await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
   });
   test('there are two blogs', async () => {
-    // const blogsAtEnd = await helper.blogsInDb();
     const response = await api.get('/api/blogs');
 
     expect(response.body).toHaveLength(helper.initialBlogs.length);
@@ -31,6 +29,26 @@ describe('viewing blogs', () => {
 });
 
 describe('addition of a new blog', () => {
+  var token;
+
+  beforeAll(async function () {
+    await User.deleteMany({});
+
+    const passwordHash = await bcrypt.hash('sekret', 10);
+    const user = new User({ username: 'root', password: passwordHash });
+
+    await user.save();
+
+    const res = await api
+      .post('/api/login')
+      .send({ username: 'root', password: 'sekret' });
+
+    console.log('statjus', res);
+
+    token = res.body.token;
+  });
+
+  test('a token is not provided', () => {});
   test('a valid blog can be added', async () => {
     const newBlog = {
       title: 'newest',
@@ -38,8 +56,12 @@ describe('addition of a new blog', () => {
       url: 'this represents url',
       likes: 0,
     };
+
+    console.log({ token });
+
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/);
