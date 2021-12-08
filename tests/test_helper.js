@@ -16,6 +16,9 @@ const initialBlogs = [
   },
 ];
 
+const createBlogsWithUser = (user) =>
+  initialBlogs.reduce((prev, blog) => [...prev, { ...blog, user }], []);
+
 const blogsInDb = async () => {
   const blogs = await Blog.find();
   return blogs.map((blog) => blog.toJSON());
@@ -30,4 +33,5 @@ module.exports = {
   initialBlogs,
   blogsInDb,
   usersInDb,
+  createBlogsWithUser,
 };

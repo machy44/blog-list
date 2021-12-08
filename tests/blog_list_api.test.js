@@ -9,11 +9,6 @@ const api = supertest(app);
 
 const Blog = require('../models/blog');
 
-beforeEach(async () => {
-  await Blog.deleteMany();
-  await Blog.insertMany(helper.initialBlogs);
-});
-
 describe('blogs', () => {
   var token;
 
@@ -30,6 +25,19 @@ describe('blogs', () => {
       .send({ username: 'root', password: 'sekret' });
 
     token = res.body.token;
+  });
+
+  beforeEach(async () => {
+    const user = await User.findOne({ username: 'root' });
+    const blogsWitUser = helper.createBlogsWithUser(user._id.toString());
+
+    await Blog.deleteMany();
+    await Blog.insertMany(blogsWitUser);
+  });
+
+  afterAll(async () => {
+    await User.deleteMany({});
+    await Blog.deleteMany();
   });
   describe('viewing blogs', () => {
     test('blogs are returned as json', async () => {
