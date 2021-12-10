@@ -37,7 +37,7 @@ describe('blogs', () => {
 
   afterAll(async () => {
     await User.deleteMany({});
-  await Blog.deleteMany();
+    await Blog.deleteMany();
   });
   describe('viewing blogs', () => {
     test('blogs are returned as json', async () => {
