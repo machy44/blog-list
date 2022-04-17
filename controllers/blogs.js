@@ -5,7 +5,7 @@ const Blog = require('../models/blog');
 const Comment = require('../models/comment');
 
 blogsRouter.get('/', async (request, response) => {
-  const blogs = await Blog.find().populate('user', { username: 1, name: 1 });
+  const blogs = await Blog.find().populate('user', { username: 1, name: 1 }).populate('comments', {text: 1});
   response.json(blogs);
 });
 
@@ -79,5 +79,7 @@ blogsRouter.post('/:id/comments', async (request, response) => {
   response.status(404).send();
 
 });
+
+
 
 module.exports = blogsRouter;

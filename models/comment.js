@@ -11,4 +11,11 @@ const commentSchema = new mongoose.Schema({
   },
 });
 
+commentSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString(); // _id is object event it looks like string
+    delete returnedObject._id;
+  },
+});
+
 module.exports = mongoose.model('Comment', commentSchema);
