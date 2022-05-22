@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const mongoose = require('mongoose');
 const User = require('../models/user');
 const helper = require('./test_helper');
 const app = require('../app');
@@ -91,7 +92,7 @@ describe('when there is initially one user in db', () => {
         .expect('Content-Type', /application\/json/);
 
       expect(result.body.error).toContain(
-        'shorter than the minimum allowed length'
+        'username is too short'
       );
 
       const usersAtEnd = await helper.usersInDb();
@@ -140,5 +141,8 @@ describe('when there is initially one user in db', () => {
       const usernames = usersAtEnd.map((u) => u.username);
       expect(usernames).toContain(validNewUser.username);
     });
+  });
+  afterAll(() => {
+    mongoose.connection.close();
   });
 });
