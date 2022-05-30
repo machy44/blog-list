@@ -61,7 +61,7 @@ blogsRouter.put('/:id', userExtractor, async (request, response) => {
   response.json(updatedNote);
 });
 
-blogsRouter.post('/:id/comments', async (request, response) => {
+blogsRouter.post('/:id/comments', userExtractor, async (request, response) => {
   const body = request.body;
 
   const blog = await Blog.findById(request.params.id);
