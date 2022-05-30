@@ -75,7 +75,7 @@ blogsRouter.post('/:id/comments', userExtractor, async (request, response) => {
     blog.comments = blog.comments.concat(savedComment._id);
     await blog.save();
   
-    response.status(201).json(savedComment);
+    return response.status(201).json(savedComment);
   }
 
   response.status(404).send();

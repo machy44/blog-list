@@ -4,10 +4,11 @@ const helper = require('./test_helper');
 const app = require('../app');
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
+const Blog = require('../models/blog');
+const Comment = require('../models/comment');
 
 const api = supertest(app);
 
-const Blog = require('../models/blog');
 
 describe('blogs', () => {
   var token;
@@ -31,6 +32,7 @@ describe('blogs', () => {
     const user = await User.findOne({ username: 'root' });
     const blogsWitUser = helper.createBlogsWithUser(user._id.toString());
 
+    await Comment.deleteMany();
     await Blog.deleteMany();
     
     const blogs = await Blog.insertMany(blogsWitUser);
@@ -215,15 +217,48 @@ describe('blogs', () => {
       expect(blogToUpdate.likes).toBe(2);
     });
   });
+  describe('blog comments', () => {
 
-  // describe("blog comments", () => {
-  //   it("should add a comment to blog", () => {
+    const newComment = {
+      text: 'test comment',
+    };
+    
+    it('should add a comment to blog', async () => {
+      const blogs = await helper.blogsInDb();
+      
 
-  //   });
-  //   it("should not add blog if not authorized", () => {
+      await api
+        .post(`/api/blogs/${blogs[0].id}/comments`)
+        .set('Authorization', `Bearer ${token}`)
+        .send(newComment)
+        .expect(201);
+      const blogsAtEnd = await helper.blogsInDb();
+      expect(blogsAtEnd[0].comments).toHaveLength(1);
+    
+    });
+    it('should not add blog if not authorized', async () => {
+      const blogs = await helper.blogsInDb();
+ 
 
-  //   })
-  // })
+      await api
+        .post(`/api/blogs/${blogs[0].id}/comments`)
+        .send(newComment)
+        .expect(401);
+      const blogsAtEnd = await helper.blogsInDb();
+      expect(blogsAtEnd[0].comments).toHaveLength(0);
+    });
+    it('return 400 because blog id doesnt exist', async () => {
+      const unvalidId = 123;
+
+      await api
+        .post(`/api/blogs/${unvalidId}/comments`)
+        .set('Authorization', `Bearer ${token}`)
+        .send(newComment)
+        .expect(400);
+      const blogsAtEnd = await helper.blogsInDb();
+      expect(blogsAtEnd[0].comments).toHaveLength(0);
+    });
+  });
 });
 
 afterAll(() => {
