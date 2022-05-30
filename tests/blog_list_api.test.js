@@ -190,21 +190,40 @@ describe('blogs', () => {
   });
 
   describe('blog update', () => {
-    test('update blog likes', async () => {
+    test('update should not pass if user is not authorized', async () => {
       const blogsAtStart = await helper.blogsInDb();
       const blogToUpdate = blogsAtStart[0];
 
       expect(blogToUpdate.likes).toBe(1);
 
       blogToUpdate.likes = 2;
+      await api(`/api/blogs/${blogToUpdate.id}`)
+        .send(blogToUpdate)
+        .expect(401);
+    });
+    test('update blog likes', async () => {
+      const blogsAtStart = await helper.blogsInDb();
+      const blogToUpdate = blogsAtStart[0];
 
+      expect(blogToUpdate.likes).toBe(1);
+      blogToUpdate.likes = 2;
       await api
         .put(`/api/blogs/${blogToUpdate.id}`)
+        .set('Authorization', `Bearer ${token}`)
         .send(blogToUpdate)
         .expect(200);
       expect(blogToUpdate.likes).toBe(2);
     });
   });
+
+  // describe("blog comments", () => {
+  //   it("should add a comment to blog", () => {
+
+  //   });
+  //   it("should not add blog if not authorized", () => {
+
+  //   })
+  // })
 });
 
 afterAll(() => {
