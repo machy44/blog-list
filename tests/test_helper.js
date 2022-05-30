@@ -1,6 +1,7 @@
 const Blog = require('../models/blog');
 const User = require('../models/user');
 
+
 const initialBlogs = [
   {
     title: 'myths-about-useeffect',
@@ -29,9 +30,16 @@ const usersInDb = async () => {
   return users.map((user) => user.toJSON());
 };
 
+const getUserByUsername = async (username) => {
+  const user = await User.findOne({ username });
+  const userWithPopulatedBlogs = await user.populate('blogs');
+  return userWithPopulatedBlogs.toJSON();
+};
+
 module.exports = {
   initialBlogs,
   blogsInDb,
   usersInDb,
   createBlogsWithUser,
+  getUserByUsername
 };

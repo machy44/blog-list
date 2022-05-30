@@ -32,7 +32,13 @@ describe('blogs', () => {
     const blogsWitUser = helper.createBlogsWithUser(user._id.toString());
 
     await Blog.deleteMany();
-    await Blog.insertMany(blogsWitUser);
+    
+    const blogs = await Blog.insertMany(blogsWitUser);
+    //update user blogs also before each test
+    user.blogs = blogs.map((blog) => {
+      return blog._id;
+    });
+    await user.save();
   });
 
   afterAll(async () => {
@@ -149,6 +155,8 @@ describe('blogs', () => {
       const blogsAtStart = await helper.blogsInDb();
       const blogToDelete = blogsAtStart[0];
 
+    
+
       await api
         .delete(`/api/blogs/${blogToDelete.id}`)
         .set('Authorization', `Bearer ${token}`)
@@ -161,6 +169,13 @@ describe('blogs', () => {
       const titles = blogsAtEnd.map((blog) => blog.title);
 
       expect(titles).not.toContain(blogToDelete.title);
+
+      //blog should be removed from user blogs array also
+      const user = await helper.getUserByUsername('root');
+      const userBlogsIds = user.blogs.map(blog => blog.id);
+      expect(userBlogsIds).not.toContain(blogToDelete.id);
+      
+      
     });
     test('not succeeds with status code 400 if id is valid', async () => {
       await api
